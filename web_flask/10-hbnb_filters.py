@@ -1,31 +1,28 @@
 #!/usr/bin/python3
-"""sorts cities and states from the database
+"""
+starts a Flask web application
 """
 
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template
+from models import *
 from models import storage
-from models.state import State
-from models.city import City
-from models.state import State
-
-
 app = Flask(__name__)
 
 
 @app.route('/hbnb_filters', strict_slashes=False)
-def hbnb_filters():
-    """filters the states and cities from database"""
-    states = dict(sorted(storage.all("State").items()))
-    amenity = dict(sorted(storage.all("Amenity").items()))
-    return render_template('10-hbnb_filters.html', title='AirBnB Clone',
-                           states=states, amenities=amenity)
+def filters():
+    """display a HTML page like 6-index.html from static"""
+    states = storage.all("State").values()
+    amenities = storage.all("Amenity").values()
+    return render_template('10-hbnb_filters.html', states=states,
+                           amenities=amenities)
 
 
 @app.teardown_appcontext
-def destroy(exception):
-    """Destroys the connection"""
+def teardown_db(exception):
+    """closes the storage on teardown"""
     storage.close()
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port='5000')
